@@ -1,0 +1,28 @@
+name: "template"
+
+services:
+  db:
+    image: postgres:13.4-alpine
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      interval: 3s
+      timeout: 3s
+      retries: 3
+    volumes:
+      - "db-data:/var/lib/postgresql/data"
+    networks:
+      - template_network
+
+volumes:
+  db-data:
+
+networks:
+   template_network:
+    name: template_network
+    driver: bridge
