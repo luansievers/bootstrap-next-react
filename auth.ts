@@ -5,6 +5,7 @@ import Credentials from 'next-auth/providers/credentials'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
     adapter: PrismaAdapter(prisma),
+    session: { strategy: 'jwt' },
     providers: [
         Credentials({
             // You can specify which fields should be submitted, by adding keys to the `credentials` object.

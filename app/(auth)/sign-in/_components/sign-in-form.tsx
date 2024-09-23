@@ -78,6 +78,7 @@ export default function SignUpForm() {
                                             {...field}
                                             type="password"
                                             placeholder="******"
+                                            autoComplete="off"
                                             disabled={isPending}
                                         />
                                     </FormControl>
