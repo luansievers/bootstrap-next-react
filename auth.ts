@@ -2,62 +2,36 @@ import NextAuth from 'next-auth'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import { prisma } from '@/prisma'
 import Credentials from 'next-auth/providers/credentials'
+import { LoginSchema } from './schemas/user'
+import { compare } from 'bcryptjs'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
     adapter: PrismaAdapter(prisma),
     session: { strategy: 'jwt' },
     providers: [
         Credentials({
-            // You can specify which fields should be submitted, by adding keys to the `credentials` object.
-            // e.g. domain, username, password, 2FA token, etc.
             credentials: {
                 username: { label: 'Email' },
                 password: { label: 'Password', type: 'password' },
             },
-            // authorize: async (credentials) => {
-            //     const { email, password } = await signInSchema.parseAsync(
-            //         credentials
-            //     )
-            //     console.log(credentials, email, password)
-            //     return null
-            // },
-            // authorize(credentials, request) {
+            authorize: async (credentials) => {
+                console.log(1)
+                const { success, data } = LoginSchema.safeParse(credentials)
 
-            // },
-            // authorize: async (credentials) => {
-            //     try {
-            //         const { email, password } = await signInSchema.parseAsync(
-            //             credentials
-            //         )
-            //         const user = await prisma.user.findFirst({
-            //             where: {
-            //                 email,
-            //             },
-            //         })
+                if (!success) return null
 
-            //         if (!user) {
-            //             throw new Error('User not found.')
-            //         }
+                const { email, password } = data
+                const user = await prisma.user.findUnique({ where: { email } })
 
-            //         const passwordCorrect = await compare(
-            //             password,
-            //             user.password
-            //         )
+                if (!user?.password) return null
 
-            //         // return user object with their profile data
-            //         return user
-            //     } catch (error) {
-            //         if (error instanceof ZodError) {
-            //             // Return `null` to indicate that the credentials are invalid
-            //             return null
-            //         }
-            //     }
-            // },
+                return (await compare(password, user.password)) ? user : null
+            },
         }),
     ],
-    // pages: {
-    //     signIn: '/sign-in',
-    //     newUser: '/sign-up',
-    //     error: '/error',
-    // },
+    pages: {
+        signIn: '/sign-in',
+        newUser: '/sign-up',
+        // error: '/error',
+    },
 })

@@ -18,6 +18,8 @@ import {
     FormLabel,
     FormMessage,
 } from '@/components/ui/form'
+import { login } from '@/actions/auth'
+import { toast } from '@/hooks/use-toast'
 // import { toast } from '@/hooks/use-toast'
 
 export default function SignUpForm() {
@@ -33,13 +35,14 @@ export default function SignUpForm() {
 
     const onSubmit = (values: z.infer<typeof LoginSchema>) => {
         starTransition(() => {
-            console.log(values)
-            // login(values).then((data) => {
-            //     toast({
-            //         title: data.error ? 'Error' : 'Success',
-            //         description: data.error || data.success,
-            //     })
-            // })
+            login(values).then((data) => {
+                if (data) {
+                    toast({
+                        title: 'Oops, something went wrong!',
+                        description: data.error,
+                    })
+                }
+            })
         })
     }
     return (
