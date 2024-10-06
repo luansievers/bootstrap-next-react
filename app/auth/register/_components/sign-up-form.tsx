@@ -35,7 +35,6 @@ export default function SignUpForm() {
 
     const onSubmit = (values: z.infer<typeof RegisterUserSchema>) => {
         starTransition(() => {
-            console.log(values)
             registerUser(values).then((data) => {
                 toast({
                     title: data.error ? 'Error' : 'Success',
