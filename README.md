@@ -47,6 +47,8 @@ npm exec prisma migrate dev
 
 > Note Prisma doesn’t support `.env.local` syntax, it must be named `.env`
 
+When creating a new model, use `npx prisma generate` and `npx prisma db push`
+
 ## Database
 
 Run the following command to create a docker container with PostgreSQL

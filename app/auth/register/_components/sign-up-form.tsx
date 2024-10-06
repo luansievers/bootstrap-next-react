@@ -20,9 +20,13 @@ import {
 } from '@/components/ui/form'
 import { registerUser } from '@/actions/user'
 import { toast } from '@/hooks/use-toast'
+import { useRouter } from 'next/navigation'
+import { BEFORE_LOGIN_REDIRECT } from '@/routes'
 
 export default function SignUpForm() {
     const [isPending, starTransition] = useTransition()
+
+    const router = useRouter()
 
     const form = useForm<z.infer<typeof RegisterUserSchema>>({
         resolver: zodResolver(RegisterUserSchema),
@@ -40,6 +44,7 @@ export default function SignUpForm() {
                     title: data.error ? 'Error' : 'Success',
                     description: data.error || data.success,
                 })
+                router.push(BEFORE_LOGIN_REDIRECT)
             })
         })
     }

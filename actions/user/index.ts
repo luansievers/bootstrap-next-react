@@ -1,5 +1,7 @@
 'use server'
 
+import { sendVerificationEmail } from '@/lib/mail'
+import { generateVerificationToken } from '@/lib/tokens'
 import { prisma } from '@/prisma'
 import { RegisterUserSchema } from '@/schemas/user'
 import { hash } from 'bcryptjs'
@@ -22,6 +24,12 @@ export const registerUser = async (
     })
 
     // TODO: send verification token
+    const verificationToken = await generateVerificationToken(email)
 
-    return { success: 'User Created' }
+    await sendVerificationEmail(
+        verificationToken.email,
+        verificationToken.token
+    )
+
+    return { success: 'Please verify your email' }
 }

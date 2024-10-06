@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function Page() {
     return (
         <AuthCard
-            backButtonHref="sign-up"
+            backButtonHref="register"
             backButtonText="Sign Up"
             backDescription="Don't have an account?"
             description="Enter your email below to login to your account"

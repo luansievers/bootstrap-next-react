@@ -6,6 +6,10 @@ import Google from 'next-auth/providers/google'
 import { LoginSchema } from './schemas/user'
 import { compare } from 'bcryptjs'
 import { UserRole } from '@prisma/client'
+// import { generateVerificationToken } from './lib/tokens'
+import { AccessDenied } from '@auth/core/errors'
+import { generateVerificationToken } from './lib/tokens'
+import { sendVerificationEmail } from './lib/mail'
 
 declare module 'next-auth' {
     interface Session {
@@ -16,6 +20,7 @@ declare module 'next-auth' {
 
     interface User {
         role: UserRole
+        emailVerified: Date | null
     }
 }
 
@@ -44,6 +49,25 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             session.user.id = token.id as string
             session.user.role = token.role as UserRole
             return session
+        },
+        async signIn({ user }) {
+            if (user.emailVerified) {
+                return true
+            }
+            const verificationToken = await generateVerificationToken(
+                user.email!
+            )
+            await sendVerificationEmail(
+                verificationToken.email,
+                verificationToken.token
+            )
+            // TODO: Maybe redirect to verify page?
+            throw new AccessDenied({
+                cause: {
+                    message: 'Confirmation email sent!',
+                    type: 'VerificationEmailSent',
+                },
+            })
         },
     },
     providers: [

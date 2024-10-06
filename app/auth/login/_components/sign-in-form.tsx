@@ -33,14 +33,15 @@ export default function SignInForm() {
     })
 
     const onSubmit = (values: z.infer<typeof LoginSchema>) => {
-        starTransition(() => {
-            login(values).then((data) => {
-                if (data) {
-                    toast({
-                        title: 'Oops, something went wrong!',
-                        description: data.error,
-                    })
-                }
+        starTransition(async () => {
+            const data = await login(values)
+            if (!data) {
+                return
+            }
+            const { title, description } = data
+            toast({
+                title: title || 'Oops, something went wrong!',
+                description: description,
             })
         })
     }

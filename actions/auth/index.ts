@@ -1,6 +1,6 @@
 'use server'
 
-import { signIn, signOut } from '@/auth'
+import { signIn } from '@/auth'
 import { AFTER_LOGIN_REDIRECT } from '@/routes'
 import { LoginSchema } from '@/schemas/user'
 import { AuthError } from 'next-auth'
@@ -10,7 +10,7 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
     const validatedFields = LoginSchema.safeParse(values)
 
     if (!validatedFields.success) {
-        return { error: 'Invalid Fields!' }
+        return { description: 'Invalid Fields!' }
     }
 
     const { email, password } = validatedFields.data
@@ -23,26 +23,19 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
         })
     } catch (error) {
         if (error instanceof AuthError) {
-            switch (error.type) {
-                case 'CredentialsSignin':
-                    return { error: 'Invalid credentials' }
-                default:
-                    return { error: 'Something went wrong' }
+            if (error.type === 'CredentialsSignin')
+                return { description: 'Invalid credentials' }
+            if (
+                error.type === 'AccessDenied' &&
+                error.cause?.type === 'VerificationEmailSent'
+            ) {
+                return {
+                    title: 'Please verify the email',
+                    description: 'Confirmation email sent!',
+                }
             }
+            return { description: 'Something went wrong' }
         }
-        // TODO
-        // if (error instanceof AuthError) {
-        //     return redirect(`/sign-in?error=${error.type}`)
-        // }
-
-        throw error
-    }
-}
-
-export const logout = async () => {
-    try {
-        await signOut()
-    } catch (error) {
         throw error
     }
 }
