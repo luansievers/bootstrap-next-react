@@ -1,7 +1,7 @@
 'use server'
 
 import { signIn, signOut } from '@/auth'
-import { DEFAULT_LOGIN_REDIRECT } from '@/routes'
+import { AFTER_LOGIN_REDIRECT } from '@/routes'
 import { LoginSchema } from '@/schemas/user'
 import { AuthError } from 'next-auth'
 import { z } from 'zod'
@@ -19,7 +19,7 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
         await signIn('credentials', {
             email,
             password,
-            redirectTo: DEFAULT_LOGIN_REDIRECT,
+            redirectTo: AFTER_LOGIN_REDIRECT,
         })
     } catch (error) {
         if (error instanceof AuthError) {
@@ -30,6 +30,10 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
                     return { error: 'Something went wrong' }
             }
         }
+        // TODO
+        // if (error instanceof AuthError) {
+        //     return redirect(`/sign-in?error=${error.type}`)
+        // }
 
         throw error
     }

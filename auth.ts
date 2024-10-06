@@ -2,6 +2,7 @@ import NextAuth, { DefaultSession } from 'next-auth'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import { prisma } from '@/prisma'
 import Credentials from 'next-auth/providers/credentials'
+import Google from 'next-auth/providers/google'
 import { LoginSchema } from './schemas/user'
 import { compare } from 'bcryptjs'
 import { UserRole } from '@prisma/client'
@@ -21,6 +22,15 @@ declare module 'next-auth' {
 export const { handlers, auth, signIn, signOut } = NextAuth({
     adapter: PrismaAdapter(prisma),
     session: { strategy: 'jwt' },
+    events: {
+        // Automatically verify email for providers like Google
+        async linkAccount({ user }) {
+            await prisma.user.update({
+                where: { id: user.id },
+                data: { emailVerified: new Date() },
+            })
+        },
+    },
     callbacks: {
         jwt({ token, user }) {
             if (user) {
@@ -37,6 +47,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         },
     },
     providers: [
+        Google,
         Credentials({
             credentials: {
                 username: { label: 'Email' },
@@ -57,8 +68,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }),
     ],
     pages: {
-        signIn: '/sign-in',
-        newUser: '/sign-up',
-        // error: '/error',
+        signIn: '/auth/login',
+        newUser: '/auth/register',
+        error: '/auth/error',
+
+        // signOut: '/auth/signout',
+        // verifyRequest: '/auth/verify-request',
+        // newUser: '/auth/new-user'
     },
 })

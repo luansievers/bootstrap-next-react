@@ -20,9 +20,8 @@ import {
 } from '@/components/ui/form'
 import { login } from '@/actions/auth'
 import { toast } from '@/hooks/use-toast'
-// import { toast } from '@/hooks/use-toast'
 
-export default function SignUpForm() {
+export default function SignInForm() {
     const [isPending, starTransition] = useTransition()
 
     const form = useForm<z.infer<typeof LoginSchema>>({

@@ -2,7 +2,8 @@ import { auth } from '@/auth'
 import {
     apiAuthPrefix,
     authRoutes,
-    DEFAULT_LOGIN_REDIRECT,
+    AFTER_LOGIN_REDIRECT,
+    BEFORE_LOGIN_REDIRECT,
     publicRoutes,
 } from './routes'
 import { NextResponse } from 'next/server'
@@ -28,9 +29,7 @@ export default auth((request) => {
     // Authentication routes should only be accessible for non authenticated users
     if (isAuthRoute) {
         if (isLoggedIn) {
-            return NextResponse.redirect(
-                new URL(DEFAULT_LOGIN_REDIRECT, nextUrl)
-            )
+            return NextResponse.redirect(new URL(AFTER_LOGIN_REDIRECT, nextUrl))
         }
         return
     }
@@ -38,7 +37,7 @@ export default auth((request) => {
     // Non authenticated users that try to access a route that is not public
     // should be redirected to authentication page
     if (!isLoggedIn && !isPublicRoute) {
-        return NextResponse.redirect(new URL('/sign-in', nextUrl))
+        return NextResponse.redirect(new URL(BEFORE_LOGIN_REDIRECT, nextUrl))
     }
 
     return

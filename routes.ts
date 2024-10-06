@@ -14,7 +14,11 @@ export const publicRoutes: string[] = ['/']
  *
  * @type {string[]}
  */
-export const authRoutes: string[] = ['/sign-in', '/sign-up', '/forgot-password']
+export const authRoutes: string[] = [
+    '/auth/login',
+    '/auth/register',
+    '/auth/error',
+]
 
 /**
  * The prefix for API authentication routes used by next-auth
@@ -28,4 +32,11 @@ export const apiAuthPrefix: string = '/api/auth'
  *
  * @type string
  */
-export const DEFAULT_LOGIN_REDIRECT: string = '/settings'
+export const AFTER_LOGIN_REDIRECT: string = '/settings'
+
+/**
+ * The default page to redirect before user obtain session
+ *
+ * @type string
+ */
+export const BEFORE_LOGIN_REDIRECT: string = '/auth/login'
