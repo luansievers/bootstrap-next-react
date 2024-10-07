@@ -5,7 +5,7 @@ export const generateVerificationToken = async (email: string) => {
     const token = uuidv4()
 
     // Expires in one hour
-    const expires = new Date(new Date().getTime() + 3600 * 1000)
+    const expiresAt = new Date(new Date().getTime() + 3600 * 1000)
 
     const existingToken = await prisma.verificationToken.findFirst({
         where: { email },
@@ -22,7 +22,7 @@ export const generateVerificationToken = async (email: string) => {
         data: {
             email,
             token,
-            expires,
+            expiresAt,
         },
     })
 

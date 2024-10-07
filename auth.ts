@@ -50,8 +50,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             session.user.role = token.role as UserRole
             return session
         },
-        async signIn({ user }) {
-            if (user.emailVerified) {
+        async signIn({ user, account }) {
+            if (account?.provider !== 'credentials') {
                 return true
             }
             const verificationToken = await generateVerificationToken(
@@ -95,9 +95,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         signIn: '/auth/login',
         newUser: '/auth/register',
         error: '/auth/error',
-
-        // signOut: '/auth/signout',
+        signOut: '/auth/logout',
         // verifyRequest: '/auth/verify-request',
-        // newUser: '/auth/new-user'
     },
 })
