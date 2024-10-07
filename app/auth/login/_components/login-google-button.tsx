@@ -8,7 +8,7 @@ import { Icons } from '@/components/icons'
 import { AFTER_LOGIN_REDIRECT } from '@/routes'
 import { useTransition } from 'react'
 
-export default function SignInGoogleButton() {
+export default function LoginGoogleButton() {
     const [isPending, starTransition] = useTransition()
     const onClick = () => {
         starTransition(async () => {

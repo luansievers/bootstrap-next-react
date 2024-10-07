@@ -1,23 +1,23 @@
 import { Metadata } from 'next'
 import AuthCard from '../_components/auth-card'
-import SignInForm from './_components/sign-in-form'
-import SignInGoogleButton from './_components/sign-in-google-button'
+import LoginForm from './_components/login-form'
+import LoginGoogleButton from './_components/login-google-button'
 
 export const metadata: Metadata = {
-    title: 'Sign In',
+    title: 'Login',
 }
 
 export default function Page() {
     return (
         <AuthCard
             backButtonHref="register"
-            backButtonText="Sign Up"
+            backButtonText="Register"
             backDescription="Don't have an account?"
             description="Enter your email below to login to your account"
-            title="Sign In"
+            title="Login"
         >
             <div className="grid gap-6">
-                <SignInForm />
+                <LoginForm />
                 <div className="relative">
                     <div className="absolute inset-0 flex items-center">
                         <span className="w-full border-t" />
@@ -28,7 +28,7 @@ export default function Page() {
                         </span>
                     </div>
                 </div>
-                <SignInGoogleButton />
+                <LoginGoogleButton />
             </div>
         </AuthCard>
     )

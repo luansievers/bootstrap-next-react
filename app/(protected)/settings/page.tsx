@@ -14,7 +14,7 @@ export default async function Page() {
             <h1>Settings Page</h1>
             <p>{JSON.stringify(session)}</p>
             <Button>
-                <Link href={'/auth/logout'}>Sign Out</Link>
+                <Link href={'/auth/logout'}>Logout</Link>
             </Button>
         </div>
     )

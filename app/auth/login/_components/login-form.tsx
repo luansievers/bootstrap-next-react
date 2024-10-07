@@ -21,7 +21,7 @@ import {
 import { login } from '@/actions/auth'
 import { toast } from '@/hooks/use-toast'
 
-export default function SignInForm() {
+export default function LoginForm() {
     const [isPending, starTransition] = useTransition()
 
     const form = useForm<z.infer<typeof LoginSchema>>({
@@ -95,7 +95,7 @@ export default function SignInForm() {
                         className="w-full"
                         disabled={isPending}
                     >
-                        Sign in
+                        Login
                     </Button>
                 </div>
             </form>

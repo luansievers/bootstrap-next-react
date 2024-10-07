@@ -79,8 +79,8 @@ export default function ErrorCard() {
     const error = search.get('error') as Error
     return (
         <AuthCard
-            backButtonHref="sign-in"
-            backButtonText="sign In"
+            backButtonHref="login"
+            backButtonText="Login"
             backDescription="Back to "
             description="Oops, something went wrong!"
             title="🔪 Error"
