@@ -23,7 +23,6 @@ export const registerUser = async (
         data: { name, email, password: hashedPassword },
     })
 
-    // TODO: send verification token
     const verificationToken = await generateVerificationToken(email)
 
     await sendVerificationEmail(

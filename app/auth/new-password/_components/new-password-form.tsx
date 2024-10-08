@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 
 import { Input } from '@/components/ui/input'
 import { useForm } from 'react-hook-form'
-import { LoginSchema } from '@/schemas/user'
+import { NewPasswordSchema } from '@/schemas/user'
 import { useTransition } from 'react'
 import {
     Form,
@@ -18,32 +18,43 @@ import {
     FormLabel,
     FormMessage,
 } from '@/components/ui/form'
-import { login } from '@/actions/auth'
 import { toast } from '@/hooks/use-toast'
-import Link from 'next/link'
+import { saveNewPassword } from '@/actions/reset-password-token'
+import { useRouter, useSearchParams } from 'next/navigation'
 
-export default function LoginForm() {
+export default function NewPasswordForm() {
     const [isPending, starTransition] = useTransition()
 
-    const form = useForm<z.infer<typeof LoginSchema>>({
-        resolver: zodResolver(LoginSchema),
+    const searchParams = useSearchParams()
+    const router = useRouter()
+
+    const token = searchParams.get('token')
+
+    if (!token) {
+        toast({
+            title: 'Oops, something went wrong!',
+            description: 'Token is missing',
+        })
+        router.push('/login')
+    }
+
+    const form = useForm<z.infer<typeof NewPasswordSchema>>({
+        resolver: zodResolver(NewPasswordSchema),
         defaultValues: {
-            email: '',
             password: '',
         },
     })
 
-    const onSubmit = (values: z.infer<typeof LoginSchema>) => {
+    const onSubmit = (values: z.infer<typeof NewPasswordSchema>) => {
         starTransition(async () => {
-            const data = await login(values)
-            if (!data) {
-                return
-            }
-            const { title, description } = data
+            const data = await saveNewPassword(values, token)
             toast({
-                title: title || 'Oops, something went wrong!',
-                description: description,
+                title: data.error ? 'Oops, something went wrong!' : 'Success',
+                description: data.error || data.success,
             })
+            if (data.success) {
+                router.push('/login')
+            }
         })
     }
     return (
@@ -53,37 +64,11 @@ export default function LoginForm() {
                     <div className="grid gap-2">
                         <FormField
                             control={form.control}
-                            name="email"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Email</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            {...field}
-                                            type="email"
-                                            placeholder="m@example.com"
-                                            disabled={isPending}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    </div>
-                    <div className="grid gap-2">
-                        <FormField
-                            control={form.control}
                             name="password"
                             render={({ field }) => (
                                 <FormItem>
                                     <div className="flex items-center">
                                         <FormLabel>Password</FormLabel>
-                                        <Link
-                                            href="/auth/reset"
-                                            className="ml-auto inline-block text-sm underline"
-                                        >
-                                            Forgot your password?
-                                        </Link>
                                     </div>
                                     <FormControl>
                                         <Input
@@ -104,7 +89,7 @@ export default function LoginForm() {
                         className="w-full"
                         disabled={isPending}
                     >
-                        Login
+                        Reset password
                     </Button>
                 </div>
             </form>
